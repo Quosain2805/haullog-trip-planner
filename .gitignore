@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+db.sqlite3
+staticfiles/
+.pytest_cache/
+node_modules/
+dist/
+.vercel/
+.scratch_path
+hos.txt
+docs/
