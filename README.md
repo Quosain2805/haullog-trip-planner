@@ -11,7 +11,7 @@ A full-stack app (**Django + React**) that takes a trip's details and returns:
 | | |
 |---|---|
 | Live app | _add Vercel URL_ |
-| API health check | _add Render URL_`/api/health/` |
+| API health check | _add API URL_`/api/health/` |
 | Loom walkthrough | _add link_ |
 
 ## Features
@@ -95,12 +95,18 @@ Tests: `cd backend && pytest` · Frontend checks: `cd frontend && npm run build`
 
 ## Deploy
 
-**API → Render** (free): New → Blueprint → select this repo (uses [render.yaml](render.yaml)).
-Then set `CORS_ALLOWED_ORIGINS` to your Vercel URL. *(Free instances sleep; the UI pings `/api/health/` on load and shows a "server is waking up" hint if the first request is slow.)*
+Both halves deploy to **Vercel** (free, no card) as two projects from this one repo.
 
-**Web → Vercel**: import the repo, set **Root Directory** to `frontend`, add the env var
-`VITE_API_URL=https://<your-render-service>.onrender.com`, deploy.
-(`*.vercel.app` origins are already allowed by CORS.)
+**1. API** — import the repo, set **Root Directory** to `backend`, add the env var
+`DJANGO_SECRET_KEY` (any long random string), deploy. The serverless entry point is
+[backend/api/index.py](backend/api/index.py) and the config is [backend/vercel.json](backend/vercel.json).
+Check `https://<api-project>.vercel.app/api/health/` returns `{"status":"ok"}`.
+
+**2. Web** — import the repo again, set **Root Directory** to `frontend`, add the env var
+`VITE_API_URL=https://<api-project>.vercel.app` (no trailing slash), deploy.
+
+`*.vercel.app` origins are already allowed by CORS; add other origins with `CORS_ALLOWED_ORIGINS` (comma separated).
+Any host that runs `gunicorn config.wsgi:application` (Render, Railway, Fly, …) works for the API as well.
 
 ## Credits
 Map data © OpenStreetMap contributors · routing by OSRM · place names from [GeoNames](https://www.geonames.org) (CC BY 4.0).
